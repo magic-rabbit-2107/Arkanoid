@@ -129,6 +129,15 @@ public class PlayerController : MonoBehaviour
         _animator.speed = 0.5f;
     }
 
+    public void collectPowerUp(PowerUpType powerup)
+    {
+        Debug.Log($"power up {powerup}");
+
+        
+    }
+
+
+
 public bool AnimationStateCompleted(string stateName)
 {
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
