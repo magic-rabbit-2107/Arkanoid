@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
     
     public float VelocityX { get; private set; }
 
+    private Arena _arena;
+
     private void Awake()
     {
         _rigidBody = GetComponent<Rigidbody2D>();
@@ -40,6 +42,10 @@ public class PlayerController : MonoBehaviour
         _rigidBody.interpolation = RigidbodyInterpolation2D.Interpolate;
 
         _animator = GetComponent<Animator>();
+
+        _arena = FindFirstObjectByType<Arena>();
+
+
 
         // foreach (var p in _animator.parameters)
         // {
@@ -133,7 +139,19 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log($"power up {powerup}");
 
+        if (powerup == PowerUpType.ExtraLife)
+        {
+          addExtraLife();
+          return;  
+        }
         
+    }
+
+    public void addExtraLife()
+    {
+       _arena.GameState.AddLife();
+       _arena.playExtraLifeSound();
+       _arena.updateLifeIcons();
     }
 
 
