@@ -837,6 +837,7 @@ MonoBehaviour:
   _gameState: {fileID: 11400000, guid: 84261cff8a4bf4071ab5b137b0f0669f, type: 2}
   _gameOverObject: {fileID: 898978193}
   _database: {fileID: 11400000, guid: b80492c6a79894a8b819ac18453c7d52, type: 2}
+  _powerUpState: {fileID: 11400000, guid: 4cef69b54a0d543aa8276877b37ba0b3, type: 2}
 --- !u!114 &1031030376
 MonoBehaviour:
   m_ObjectHideFlags: 0
