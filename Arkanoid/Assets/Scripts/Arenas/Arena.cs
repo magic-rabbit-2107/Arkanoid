@@ -102,6 +102,11 @@ public abstract class Arena : MonoBehaviour
 
 [SerializeField] private LevelDatabase _database;
 
+ [Header("Power Up")]
+    [SerializeField] 
+    private PowerUpState _powerUpState;
+
+    public PowerUpState PowerUpState => _powerUpState;
 
     protected virtual void Awake()
     {
