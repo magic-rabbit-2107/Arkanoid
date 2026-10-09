@@ -12,4 +12,6 @@ public class LevelDatabase : ScriptableObject
     public AudioClip getReadySound;
 
     public AudioClip destroyPaddleSound;
+
+    public AudioClip extraLifeSound;
 }
