@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0ed7fbd3a30744089f31afd756021ff, type: 3}
+  m_Name: LevelDatabase
+  m_EditorClassIdentifier: 
+  blockPrefabs:
+  - type: 1
+    prefab: {fileID: 4669604136608479383, guid: efc173ade4ba54d54a562234ce61ac1c, type: 3}
+  - type: 2
+    prefab: {fileID: 4669604136608479383, guid: bc6088f92ac104e159b56a6dfb69bbda, type: 3}
+  - type: 3
+    prefab: {fileID: 4669604136608479383, guid: 8dd59cd11ae464c22aedd758c14cb918, type: 3}
+  - type: 4
+    prefab: {fileID: 4669604136608479383, guid: 84798d0eccf7e462aaa1baa8e52b9413, type: 3}
+  - type: 5
+    prefab: {fileID: 4669604136608479383, guid: 2821217f5939c4cc885bc54e2a5ea7ef, type: 3}
+  - type: 6
+    prefab: {fileID: 4669604136608479383, guid: 48827c0ab9e734f4d8aa5f0faaca124e, type: 3}
+  - type: 7
+    prefab: {fileID: 4669604136608479383, guid: 46b0b70a7ad894d1cb459245f3503d20, type: 3}
+  - type: 8
+    prefab: {fileID: 4669604136608479383, guid: b6ea0b9eb77dc4b7da74baa24f37cde9, type: 3}
+  - type: 9
+    prefab: {fileID: 4669604136608479383, guid: 330abb6465d0b431898fa771e762af0a, type: 3}
+  lifeIcon: {fileID: 1560034688299417576, guid: 0b18e08c4f1b642a68533e8d743c72a6, type: 3}
+  paddle: {fileID: 8766275966380246255, guid: 1b7c06cd4f05649fb9b39e9f8ec0a2ae, type: 3}
+  ballPrefab: {fileID: 4828176972538148279, guid: 29e036bd41d8245bd9e933f58d02bd10, type: 3}
+  getReadySound: {fileID: 8300000, guid: 52992ea9f83554f4d84ef6559eca52be, type: 3}
+  destroyPaddleSound: {fileID: 8300000, guid: 8d40c66b94cfd400eaca2b0d44fca1a5, type: 3}

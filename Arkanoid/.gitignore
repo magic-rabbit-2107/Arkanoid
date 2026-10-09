@@ -1,0 +1,12 @@
+# Unity generated files
+
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Uu]serSettings/
+
+# IDE and operating system files
+
+.vs/
+.DS_Store

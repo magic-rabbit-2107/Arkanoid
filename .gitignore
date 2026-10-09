@@ -1,0 +1,19 @@
+# Unity generated files
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Ll]ogs/
+**/[Uu]serSettings/
+
+# macOS files
+.DS_Store
+**/.DS_Store
+
+# IDE files
+.vs/
+
+# Unity generated project files
+**/Logs/
+**/obj/
+*.csproj
+*.sln
