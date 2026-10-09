@@ -133,6 +133,10 @@ public class BlockScript : MonoBehaviour
 
         GameObject capsule = Instantiate(_capsule, new Vector3(transform.position.x, transform.position.y, 0), transform.rotation);
 
+        PowerUp powerUp = capsule.GetComponent<PowerUp>();
+
+        powerUp.powerUpType = _powerUpType.Value;
+
         capsule.transform.parent = GameObject.Find("Blocks").transform; 
 
         capsule.transform.localScale = new Vector3(0.89f, 0.92f, 1);
