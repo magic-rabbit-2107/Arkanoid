@@ -10,6 +10,8 @@ public class Ball : MonoBehaviour
 
     public float launchSpeed = 8f;
 
+    private Arena _arena;
+
     [SerializeField] private AudioClip _paddleHitSound;
     [SerializeField] private AudioClip _blockHitSound1;
     private AudioSource _audioSource;
@@ -32,16 +34,23 @@ public class Ball : MonoBehaviour
         _rigidBody.gravityScale = 0;
 
         _rigidBody.sharedMaterial = null;
+
+        _arena = FindFirstObjectByType<Arena>();
     }
 
-    public void AttachToPaddle(Transform paddle)
+    public void AttachToPaddle(Transform paddle, bool launchFromCenter = true)
     {
         _ballLaunched = false;
         _rigidBody.velocity = Vector2.zero;
         _rigidBody.isKinematic = true;
 
         transform.SetParent(paddle);
-        transform.localPosition = new Vector2(0f, 0.05f);
+
+        if (launchFromCenter || transform.localPosition.y < 0f)
+        {
+         transform.localPosition = new Vector2(0f, 0.05f);    
+        }
+        
     }
 
 
@@ -87,6 +96,13 @@ public class Ball : MonoBehaviour
             $"velocity={_rigidBody.velocity} | " +
             $"position={_rigidBody.position}"
             );
+
+            if (_arena.PowerUpState.catchActive)
+            {
+
+                AttachToPaddle(_arena.Paddle.transform, false);
+                return;
+            }
 
             BounceFromPaddle(collision);
 
