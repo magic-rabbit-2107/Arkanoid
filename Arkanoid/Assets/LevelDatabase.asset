@@ -36,3 +36,4 @@ MonoBehaviour:
   ballPrefab: {fileID: 4828176972538148279, guid: 29e036bd41d8245bd9e933f58d02bd10, type: 3}
   getReadySound: {fileID: 8300000, guid: 52992ea9f83554f4d84ef6559eca52be, type: 3}
   destroyPaddleSound: {fileID: 8300000, guid: 8d40c66b94cfd400eaca2b0d44fca1a5, type: 3}
+  extraLifeSound: {fileID: 8300000, guid: d75375d3b51bb4105a3bf943772d9ccd, type: 3}
