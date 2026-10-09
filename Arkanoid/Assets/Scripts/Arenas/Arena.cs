@@ -58,6 +58,8 @@ public abstract class Arena : MonoBehaviour
 
     private GameObject _paddleObject;
 
+    public GameObject Paddle => _paddleObject;
+
     private GameObject _ballObject;
 
     public List<GameObject> ballObjects {get; set; }
