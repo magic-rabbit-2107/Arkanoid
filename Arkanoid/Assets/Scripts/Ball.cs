@@ -44,6 +44,8 @@ public class Ball : MonoBehaviour
         _rigidBody.velocity = Vector2.zero;
         _rigidBody.isKinematic = true;
 
+
+        
         transform.SetParent(paddle);
 
         if (launchFromCenter || transform.localPosition.y < 0f)
@@ -99,6 +101,9 @@ public class Ball : MonoBehaviour
 
             if (_arena.PowerUpState.catchActive)
             {
+                PlayerController playerController = _arena.Paddle.GetComponent<PlayerController>();
+
+                playerController.SetBall(this);
 
                 AttachToPaddle(_arena.Paddle.transform, false);
                 return;
