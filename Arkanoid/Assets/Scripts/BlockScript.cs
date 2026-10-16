@@ -17,7 +17,7 @@ public class BlockScript : MonoBehaviour
     {
         new PowerUpChance { type = PowerUpType.ExtraLife, weight = 10f },
         new PowerUpChance { type = PowerUpType.LongPaddle, weight = 30f },
-        new PowerUpChance { type = PowerUpType.FastBall, weight = 20f },
+        new PowerUpChance { type = PowerUpType.Catch, weight = 20f },
         new PowerUpChance { type = PowerUpType.MultiBall, weight = 20f }
     };
 
