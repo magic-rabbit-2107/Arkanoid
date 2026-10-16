@@ -139,19 +139,33 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log($"power up {powerup}");
 
+        _arena.PowerUpState.ResetPowerUps();
+
         if (powerup == PowerUpType.ExtraLife)
         {
           addExtraLife();
           return;  
         }
+
+        if (powerup == PowerUpType.Catch)
+        {
+           setPowerUpAsCatchBall();
+           return;     
+        }
+        
         
     }
 
-    public void addExtraLife()
+    private void addExtraLife()
     {
        _arena.GameState.AddLife();
        _arena.playExtraLifeSound();
        _arena.updateLifeIcons();
+    }
+
+    private void setPowerUpAsCatchBall()
+    {
+        _arena.PowerUpState.catchActive = true;
     }
 
 
