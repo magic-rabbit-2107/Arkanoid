@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour
 
         if (powerup == PowerUpType.ExtraLife)
         {
-          addExtraLife();
+          addExtraLife(); 
           return;  
         }
 
@@ -151,6 +151,12 @@ public class PlayerController : MonoBehaviour
         {
            setPowerUpAsCatchBall();
            return;     
+        }
+        
+        if (powerup == PowerUpType.MultiBall)
+        {
+            addMultiballs();
+            return;
         }
         
         
@@ -166,6 +172,13 @@ public class PlayerController : MonoBehaviour
     private void setPowerUpAsCatchBall()
     {
         _arena.PowerUpState.catchActive = true;
+    }
+
+    private void addMultiballs()
+    {
+        if (_arena.ballSpawner.getNumberOfBalls() <= 0) return;
+
+        _arena.ballSpawner.SpawnBalls(_currentBall.transform.position, 2);
     }
 
 
