@@ -91,6 +91,8 @@ public abstract class Arena : MonoBehaviour
 
     private BallSpawner _ballSpawner;
 
+    public BallSpawner ballSpawner => _ballSpawner;
+
     private BottomWallScript _bottomWallScript;
 
     private int _blocksRemaining;
@@ -366,15 +368,24 @@ public abstract class Arena : MonoBehaviour
 
         _ballObject = _ballSpawner.createBall();
 
+
+        _ballSpawner.ballObjects.Add(_ballObject);
+
         Ball ballScript = _ballObject.GetComponent<Ball>();
 
         ballScript.AttachToPaddle(_paddleObject.transform);
 
+        
+
         _paddleObject.GetComponent<PlayerController>().SetBall(ballScript);
        
        // _ballObject.transform.parent = _levelObject.transform;
+
         _ballObject.transform.localScale = new Vector3(1f,1f,1);
+        
         _ballObject.SetActive(true);
+
+
 
         
         this.ballObjects = new List<GameObject>
