@@ -18,6 +18,7 @@ public class GetReadyState : BaseState
 
                 Debug.Log("GetReadyState-OnStateEnter");
 
+        _arena.PowerUpState.ResetPowerUps();
 
         //Update the number of ships 
         _arena.updateLifeIcons();
