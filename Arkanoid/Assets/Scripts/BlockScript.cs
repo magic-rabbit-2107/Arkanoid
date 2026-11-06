@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.MPE;
 using UnityEngine;
 
 public class BlockScript : MonoBehaviour
@@ -45,6 +44,8 @@ public class BlockScript : MonoBehaviour
     void Start()
     {
         tag = "Block";
+
+        GetComponent<BoxCollider2D>().size *= 0.85f;
 
         _arenaScript = GameObject.Find("LevelScene").GetComponent<Arena>();
 
@@ -116,7 +117,7 @@ public class BlockScript : MonoBehaviour
             Destroy(gameObject);
 
             
-            ReleasePowerUp();
+            // ReleasePowerUp();
 
         }
 

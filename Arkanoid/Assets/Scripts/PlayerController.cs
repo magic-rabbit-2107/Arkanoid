@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,17 +9,15 @@ public class PlayerController : MonoBehaviour
 {
 
     [Header("Movement Settings")]
-    public int movementSpeed = 10;
+    public float movementSpeed = 30f;
     private Rigidbody2D _rigidBody;
     private Ball _currentBall;
-
-
-    public float leftLimit = -8f;
-    public float rightLimit = 8f;
     private bool _inputEnabled = false;
 
     private Animator _animator;
 
+  public float leftLimit = -200f;
+    public float rightLimit = 8f;
 
     private bool _animationCompleted = false;
     
@@ -60,10 +57,30 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        updateHorizonalMovement();
+        if (!_inputEnabled)
+            return;
 
-        VelocityX = _rigidBody.velocity.x;
+        float horizontalMovement = Input.GetAxis("Horizontal");
 
+        Vector2 movement = new Vector2(
+            horizontalMovement * movementSpeed * Time.fixedDeltaTime,
+            0f
+        );
+
+        Vector2 newPosition = _rigidBody.position + movement;
+
+        // Keep the paddle inside the arena.
+        float halfWidth = GetComponent<Collider2D>().bounds.extents.x;
+
+        newPosition.x = Mathf.Clamp(
+            newPosition.x,
+            leftLimit + halfWidth,
+            rightLimit - halfWidth
+        );
+
+        _rigidBody.MovePosition(newPosition);
+
+        VelocityX = horizontalMovement * movementSpeed;
     }
 
     private void updateHorizonalMovement()
@@ -155,7 +172,7 @@ public class PlayerController : MonoBehaviour
         
         if (powerup == PowerUpType.MultiBall)
         {
-            addMultiballs();
+            // addMultiballs();
             return;
         }
         
