@@ -302,40 +302,52 @@ public class Ball : MonoBehaviour
         _rigidBody.velocity = ClampDirection(dir) * _ballSpeed;
     }
 
+   
     /// <summary>
-    /// Calculates the ball's bounce direction after hitting a block
-    /// or the top or underside of a surface.
-    /// The horizontal direction depends on where the ball hits the surface.
+    /// Calculates and applies the ball's bounce direction when it collides
+    /// with a block or another surface.
+    /// Uses the actual contact point to determine the horizontal bounce angle,
+    /// ensuring that the bounce direction reflects where the ball made contact.
     /// </summary>
-    /// <param name="collision">Collision information for the surface.</param>
-    /// <param name="bounceUp">True to bounce upwards, false to bounce downwards.</param>
+    /// <param name="collision">Collision information containing the contact point
+    /// and the surface collider.</param>
+    /// <param name="bounceUp">Determines whether the ball should bounce upwards
+    /// or downwards.</param>
     private void BounceFromSurface(Collision2D collision, bool bounceUp)
     {
-        Transform surface = collision.collider.transform;
+        // Get the first contact point from the collision.
+        ContactPoint2D contact = collision.GetContact(0);
 
-        // Calculate the horizontal distance between the ball
+        // Get the surface's bounds to determine its centre and half-width.
+        Bounds surfaceBounds = collision.collider.bounds;
+
+        // Calculate the horizontal distance between the contact point
         // and the centre of the surface.
-        float difference = transform.position.x - surface.position.x;
+        float difference = contact.point.x - surfaceBounds.center.x;
 
-        // Get half the surface width to normalize the impact position.
-        float halfWidth = collision.collider.bounds.extents.x;
+        // Get half the surface's width for normalizing the contact position.
+        float halfWidth = surfaceBounds.extents.x;
 
-        // Convert the impact position into a value between -1 and 1.
+        // Convert the contact position into a normalized value between -1 and 1.
+        // Negative values represent the left side; positive values represent the right.
         float hitOffset = Mathf.Clamp(
             difference / halfWidth,
             -1f,
             1f
         );
 
-        // Calculate the bounce direction using the impact position.
+        // Create a bounce direction using the horizontal contact offset
+        // and the requested vertical direction.
         Vector2 direction = new Vector2(
             hitOffset,
             bounceUp ? 1f : -1f
         ).normalized;
 
-        // Apply the bounce while maintaining consistent ball speed.
+        // Clamp the direction to prevent either component becoming too small,
+        // then apply the configured ball speed.
         _rigidBody.velocity = ClampDirection(direction) * _ballSpeed;
     }
+
 
     /// <summary>
     /// Handles the ball's bounce when it collides with a block.
