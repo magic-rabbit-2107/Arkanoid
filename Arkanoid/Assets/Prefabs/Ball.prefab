@@ -164,7 +164,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchSpeed: 8
   _paddleHitSound: {fileID: 8300000, guid: ed68555f95ac040ea92860f01638cc13, type: 3}
-  _blockHitSound1: {fileID: 8300000, guid: d94bab46d55cf458ca92ec68511f7ad2, type: 3}
+  _blockHitSounds:
+  - {fileID: 8300000, guid: d94bab46d55cf458ca92ec68511f7ad2, type: 3}
+  - {fileID: 8300000, guid: 7650fe963e14446bfb0e6419a91cf31a, type: 3}
   _maxBounceAngle: 60
   _minVerticalComponent: 0.2
   _ballSpeed: 8

@@ -43,15 +43,18 @@ public class Ball : MonoBehaviour
     [SerializeField] private AudioClip _paddleHitSound;
 
     /// <summary>
-    /// Sound played when the ball collides with a block.
+    /// Sounds played when the ball collides with a block.
     /// </summary>
-    [SerializeField] private AudioClip _blockHitSound1;
+    [SerializeField] private AudioClip[] _blockHitSounds;
+
+     
 
     /// <summary>
     /// Reference to the AudioSource component used to play sound effects.
     /// </summary>
     private AudioSource _audioSource;
-
+    
+    private int _blockSoundIndex = 0;
 
     // Ball movement and bounce configuration
 
@@ -345,10 +348,7 @@ public class Ball : MonoBehaviour
     /// </param>
     private void BounceFromBlock(Collision2D collision)
     {
-        if (_blockHitSound1 != null)
-        {
-            _audioSource.PlayOneShot(_blockHitSound1);
-        }
+        PlayBlockHitSound();
 
         ContactPoint2D contact = collision.GetContact(0);
 
@@ -357,6 +357,27 @@ public class Ball : MonoBehaviour
 
         // Bounce downwards after hitting a block.
         BounceFromSurface(collision, bounceUp);
+    }
+
+    private void PlayBlockHitSound()
+    {
+        if (_blockHitSounds.Length == 0) return;
+
+        AudioClip sound = _blockHitSounds[_blockSoundIndex];
+
+        if (sound == null) return;
+
+        _audioSource.PlayOneShot(sound);
+
+        _blockSoundIndex += 1;
+
+        int finalIndex = _blockHitSounds.Length - 1;
+
+        if (_blockSoundIndex > finalIndex)
+        {
+            _blockSoundIndex = 0;
+        }
+
     }
 
     /// <summary>
