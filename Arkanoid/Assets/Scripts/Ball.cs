@@ -392,44 +392,60 @@ public class Ball : MonoBehaviour
 
     }
 
+    
     /// <summary>
-    /// Reflects the ball's incoming velocity when it hits a wall.
-    /// Uses the collision's relative velocity to reconstruct the
-    /// incoming velocity for a stationary wall.
+    /// Calculates and applies the ball's bounce direction when it collides
+    /// with a wall.
+    /// Reconstructs the incoming velocity using the collision's relative
+    /// velocity, reflects it against the wall's contact normal, and ensures
+    /// the ball retains a minimum vertical movement component.
+    /// Restores the configured ball speed after the bounce.
     /// </summary>
-    /// <param name="collision">Collision information for the wall.</param>
+    /// <param name="collision">
+    /// Collision information containing the wall's contact point,
+    /// surface normal and relative velocity.
+    /// </param>
     private void BounceFromWall(Collision2D collision)
     {
+        // Get the contact point and the wall's surface normal.
         ContactPoint2D contact = collision.GetContact(0);
-
         Vector2 normal = contact.normal;
 
-        // Reconstruct the incoming velocity before collision resolution.
+        // Reconstruct the ball's incoming velocity.
+        // The relative velocity has the opposite sign for a stationary wall.
         Vector2 incoming = -collision.relativeVelocity;
 
-        // Avoid attempting to reflect a zero-length velocity.
+        // Check that a valid incoming velocity was obtained.
+        // Stop processing if the velocity is effectively zero.
         if (incoming.sqrMagnitude < 0.01f)
         {
             Debug.LogError("Wall collision with zero incoming velocity!");
             return;
         }
 
-        // Reflect the incoming direction around the wall's contact normal.
+        // Reflect the incoming velocity against the wall's normal
+        // to calculate the outgoing bounce direction.
         Vector2 outgoing = Vector2.Reflect(incoming, normal).normalized;
 
-        // Ensure the ball maintains a minimum vertical component.
+        // Define the minimum allowed vertical component.
+        // This prevents the ball from travelling almost horizontally.
         const float minVertical = 0.25f;
 
+        // Check whether the vertical component is below the minimum.
         if (Mathf.Abs(outgoing.y) < minVertical)
         {
+            // Enforce the minimum vertical component while preserving
+            // the existing vertical direction where possible.
             outgoing.y = Mathf.Sign(outgoing.y == 0f ? 1f : outgoing.y)
                         * minVertical;
 
-            outgoing.x = Mathf.Sign(outgoing.x)
+            // Recalculate the horizontal component to maintain
+            // a normalized direction vector.
+            outgoing.x = Mathf.Sign(outgoing.x == 0f ? 1f : outgoing.x)
                         * Mathf.Sqrt(1f - minVertical * minVertical);
         }
 
-        // Restore the configured ball speed.
+        // Apply the outgoing direction at the configured ball speed.
         _rigidBody.velocity = outgoing * _ballSpeed;
     }
 
