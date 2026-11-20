@@ -225,13 +225,7 @@ public class Ball : MonoBehaviour
         // Handle collisions with blocks.
         if (collision.collider.CompareTag("Block"))
         {
-            if (_blockHitSound1 != null)
-            {
-                _audioSource.PlayOneShot(_blockHitSound1);
-            }
-
-            // Bounce downwards after hitting a block.
-            BounceFromSurface(collision, false);
+            BounceFromBlock(collision);
             return;
         }
 
@@ -338,6 +332,31 @@ public class Ball : MonoBehaviour
 
         // Apply the bounce while maintaining consistent ball speed.
         _rigidBody.velocity = ClampDirection(direction) * _ballSpeed;
+    }
+
+    /// <summary>
+    /// Handles the ball's bounce when it collides with a block.
+    /// Plays the block hit sound and determines the bounce direction
+    /// based on the surface normal of the collision contact point.
+    /// </summary>
+    /// <param name="collision">
+    /// Collision information containing the contact point and surface normal
+    /// of the block.
+    /// </param>
+    private void BounceFromBlock(Collision2D collision)
+    {
+        if (_blockHitSound1 != null)
+        {
+            _audioSource.PlayOneShot(_blockHitSound1);
+        }
+
+        ContactPoint2D contact = collision.GetContact(0);
+
+        // Determine whether the ball should bounce upwards or downwards.
+        bool bounceUp = contact.normal.y > 0f;
+
+        // Bounce downwards after hitting a block.
+        BounceFromSurface(collision, bounceUp);
     }
 
     /// <summary>
