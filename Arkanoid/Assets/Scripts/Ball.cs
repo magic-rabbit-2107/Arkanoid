@@ -382,25 +382,22 @@ public class Ball : MonoBehaviour
         }
 
         // Reflect the incoming direction around the wall's contact normal.
-        Vector2 outgoing = Vector2.Reflect(incoming, normal);
+        Vector2 outgoing = Vector2.Reflect(incoming, normal).normalized;
 
-        // Prevent the ball from travelling almost parallel to either axis.
-        float minComponent = 0.2f;
+        // Ensure the ball maintains a minimum vertical component.
+        const float minVertical = 0.25f;
 
-        if (Mathf.Abs(outgoing.x) < minComponent)
+        if (Mathf.Abs(outgoing.y) < minVertical)
         {
-            outgoing.x = -normal.x * minComponent;
+            outgoing.y = Mathf.Sign(outgoing.y == 0f ? 1f : outgoing.y)
+                        * minVertical;
+
+            outgoing.x = Mathf.Sign(outgoing.x)
+                        * Mathf.Sqrt(1f - minVertical * minVertical);
         }
 
-        if (Mathf.Abs(outgoing.y) < minComponent)
-        {
-            outgoing.y = (outgoing.y < 0f ? -1f : 1f) * minComponent;
-        }
-
-        // Normalize the result and restore the configured ball speed.
-        outgoing = outgoing.normalized * _ballSpeed;
-
-        _rigidBody.velocity = outgoing;
+        // Restore the configured ball speed.
+        _rigidBody.velocity = outgoing * _ballSpeed;
     }
 
     /// <summary>
