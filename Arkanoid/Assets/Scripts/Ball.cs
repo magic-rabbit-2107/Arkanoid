@@ -6,25 +6,100 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Ball : MonoBehaviour
 {
+    
+    // Rigidbody and ball state
+
+    /// <summary>
+    /// Reference to the ball's Rigidbody2D component.
+    /// Used to control the ball's physics behaviour and velocity.
+    /// </summary>
     private Rigidbody2D _rigidBody;
+
+    /// <summary>
+    /// Indicates whether the ball has been launched from the paddle.
+    /// </summary>
     private bool _ballLaunched = false;
 
-    public float launchSpeed = 5;
+
+    // Game configuration
+
+    /// <summary>
+    /// Reference to the Arena component.
+    /// Used to access arena-related game functionality.
+    /// </summary>
     private Arena _arena;
 
+    /// <summary>
+    /// Initial speed applied when the ball is launched.
+    /// </summary>
+    public float launchSpeed = 5;
+
+
+    // Audio
+
+    /// <summary>
+    /// Sound played when the ball collides with the paddle.
+    /// </summary>
     [SerializeField] private AudioClip _paddleHitSound;
+
+    /// <summary>
+    /// Sound played when the ball collides with a block.
+    /// </summary>
     [SerializeField] private AudioClip _blockHitSound1;
+
+    /// <summary>
+    /// Reference to the AudioSource component used to play sound effects.
+    /// </summary>
     private AudioSource _audioSource;
 
+
+    // Ball movement and bounce configuration
+
+    /// <summary>
+    /// Maximum bounce angle, in degrees, when the ball hits the paddle.
+    /// </summary>
     [SerializeField] private float _maxBounceAngle = 60f;
+
+    /// <summary>
+    /// Minimum allowed vertical component of the ball's direction.
+    /// Helps prevent the ball from travelling almost horizontally.
+    /// </summary>
     [SerializeField] private float _minVerticalComponent = 0.2f;
+
+    /// <summary>
+    /// Speed maintained by the ball during gameplay and after collisions.
+    /// </summary>
     [SerializeField] private float _ballSpeed = 8f;
 
+
+    // Paddle movement influence
+
+    /// <summary>
+    /// Controls how strongly horizontal paddle movement influences
+    /// the ball's bounce direction.
+    /// </summary>
     [SerializeField] private float _spinStrength = 0.004f;
+
+    /// <summary>
+    /// Maximum horizontal influence that paddle movement can apply
+    /// to the ball's bounce direction.
+    /// </summary>
     [SerializeField] private float _maxSpin = 0.35f;
 
-    private float _lastBounceTime;
-    private const float BounceCooldown = 0.02f;
+
+    // Wall collision references
+
+    /// <summary>
+    /// Reference to the left boundary wall's Collider2D component.
+    /// Used to calculate the ball's distance from the left wall.
+    /// </summary>
+    private Collider2D _leftWall;
+
+    /// <summary>
+    /// Reference to the right boundary wall's Collider2D component.
+    /// Used to calculate the ball's distance from the right wall.
+    /// </summary>
+    private Collider2D _rightWall;
 
     private void Awake()
     {
@@ -36,6 +111,40 @@ public class Ball : MonoBehaviour
         _rigidBody.sharedMaterial = null;
 
         _arena = FindFirstObjectByType<Arena>();
+
+        InitializeWallColliders();
+    }
+
+    /// <summary>
+    /// Finds and initializes the Collider2D references for the left and right
+    /// boundary walls using their GameObject names and Wall tags.
+    /// </summary>
+    /// <remarks>
+    /// Searches the scene for GameObjects named "LeftWall" and "RightWall".
+    /// Each object is checked to ensure it has the "Wall" tag before its
+    /// Collider2D component is assigned to the corresponding field.
+    ///
+    /// Logs an error if either wall collider cannot be found or assigned.
+    /// </remarks>
+    private void InitializeWallColliders()
+    {
+         GameObject leftWallObject = GameObject.Find("LeftWall");
+        GameObject rightWallObject = GameObject.Find("RightWall");
+
+        if (leftWallObject != null && leftWallObject.CompareTag("Wall"))
+        {
+            _leftWall = leftWallObject.GetComponent<Collider2D>();
+        }
+
+        if (rightWallObject != null && rightWallObject.CompareTag("Wall"))
+        {
+            _rightWall = rightWallObject.GetComponent<Collider2D>();
+        }
+
+        if (_leftWall == null || _rightWall == null)
+        {
+            Debug.LogError("Ball could not find both side wall colliders!");
+        }     
     }
 
     
@@ -106,6 +215,13 @@ public class Ball : MonoBehaviour
     /// <param name="collision">Information about the collision.</param>
     private void OnCollisionEnter2D(Collision2D collision)
     {
+
+        Debug.Log(
+            $"COLLISION: {collision.collider.name}, " +
+            $"Tag: {collision.collider.tag}, " +
+            $"Velocity: {_rigidBody.velocity}"
+        );
+
         // Handle collisions with blocks.
         if (collision.collider.CompareTag("Block"))
         {
@@ -132,6 +248,22 @@ public class Ball : MonoBehaviour
             BounceFromPaddle(collision);
             return;
         }
+    }
+
+    private void LogWallClearance()
+    {
+        Bounds ballBounds = GetComponent<Collider2D>().bounds;
+
+        float leftClearance =
+            ballBounds.min.x - _leftWall.bounds.max.x;
+
+        float rightClearance =
+            _rightWall.bounds.min.x - ballBounds.max.x;
+
+        Debug.Log(
+            $"Wall clearance - Left: {leftClearance:F3}, " +
+            $"Right: {rightClearance:F3}"
+        );
     }
 
     /// <summary>
@@ -314,57 +446,131 @@ public class Ball : MonoBehaviour
     }
 
     /// <summary>
-    /// Calculates a controlled bounce angle when the ball hits
+    /// Calculates and applies the ball's bounce direction when it hits
     /// the top of the paddle.
-    /// The impact position and paddle movement can influence
-    /// the resulting direction.
+    /// The impact position, paddle movement and proximity to the side
+    /// walls influence the resulting direction.
     /// </summary>
     /// <param name="collision">Collision information for the paddle.</param>
     private void BounceFromTopOfPaddle(Collision2D collision)
     {
+        if (_leftWall != null && _rightWall != null)
+        {
+            LogWallClearance();
+        }
+
+        float normalizedHit = CalculatePaddleHitPosition(collision);
+
+        Vector2 direction = CalculatePaddleBounceDirection(normalizedHit);
+
+        ApplyPaddleMovementInfluence(ref direction, collision);
+
+        ApplyWallRestrictions(ref direction);
+
+        SetVelocity(direction);
+    }
+
+    /// <summary>
+    /// Calculates the normalized horizontal impact position on the paddle.
+    /// The returned value ranges from -1 (left edge) to 1 (right edge).
+    /// </summary>
+    /// <param name="collision">Collision information for the paddle.</param>
+    /// <returns>The normalized horizontal impact position.</returns>
+    private float CalculatePaddleHitPosition(Collision2D collision)
+    {
         Bounds paddleBounds = collision.collider.bounds;
 
-        // Calculate the ball's horizontal impact position relative to the paddle.
         float hitPoint = transform.position.x - paddleBounds.center.x;
 
-        float paddleWidth = paddleBounds.size.x;
-
-        // Normalize the impact position between -1 and 1.
-        float normalizedHit = Mathf.Clamp(
-            hitPoint / (paddleWidth / 2f),
+        return Mathf.Clamp(
+            hitPoint / (paddleBounds.size.x / 2f),
             -1f,
             1f
         );
+    }
 
-        // Convert the impact position into a bounce angle.
+    /// <summary>
+    /// Calculates the initial upward bounce direction based on
+    /// the normalized paddle impact position.
+    /// </summary>
+    /// <param name="normalizedHit">Normalized paddle impact position.</param>
+    /// <returns>The calculated bounce direction.</returns>
+    private Vector2 CalculatePaddleBounceDirection(float normalizedHit)
+    {
         float bounceAngle =
-            normalizedHit * _maxBounceAngle * Mathf.Deg2Rad;
+                normalizedHit * _maxBounceAngle * Mathf.Deg2Rad;
 
-        // Calculate the initial bounce direction.
-        Vector2 direction = new Vector2(
+        return new Vector2(
             Mathf.Sin(bounceAngle),
-            Mathf.Cos(bounceAngle)
+            Mathf.Abs(Mathf.Cos(bounceAngle))
         );
+    }
 
-        // Ensure the ball travels upwards.
-        direction.y = Mathf.Abs(direction.y);
-
-        // Add horizontal influence from paddle movement.
+    /// <summary>
+    /// Applies horizontal influence from the paddle's movement
+    /// to the calculated bounce direction.
+    /// </summary>
+    /// <param name="direction">The bounce direction to modify.</param>
+    /// <param name="collision">Collision information for the paddle.</param>
+    private void ApplyPaddleMovementInfluence(
+        ref Vector2 direction,
+        Collision2D collision)
+    {
         PlayerController paddle =
             collision.collider.GetComponent<PlayerController>();
 
-        if (paddle != null)
-        {
-            float spin = paddle.VelocityX * _spinStrength;
-            spin = Mathf.Clamp(spin, -_maxSpin, _maxSpin);
+        if (paddle == null)
+            return;
 
-            direction.x += spin;
+        float spin = paddle.VelocityX * _spinStrength;
+
+        spin = Mathf.Clamp(spin, -_maxSpin, _maxSpin);
+
+        direction.x += spin;
+    }
+
+    /// <summary>
+    /// Adjusts the horizontal bounce direction when the ball is
+    /// sufficiently close to either side wall.
+    /// Prevents the ball from bouncing further towards the nearby wall.
+    /// </summary>
+    /// <param name="direction">The bounce direction to modify.</param>
+    private void ApplyWallRestrictions(ref Vector2 direction)
+    {
+        const float wallThreshold = 0.3f;
+        const float minimumHorizontalDirection = 0.2f;
+
+        Collider2D ballCollider = GetComponent<Collider2D>();
+
+        Bounds ballBounds = ballCollider.bounds;
+
+        if (_rightWall != null)
+        {
+            float rightClearance =
+                _rightWall.bounds.min.x - ballBounds.max.x;
+
+            if (rightClearance < wallThreshold)
+            {
+                direction.x = Mathf.Min(
+                    direction.x,
+                    -minimumHorizontalDirection
+                );
+            }
         }
 
-        // Clamp the direction and apply the configured ball speed.
-        SetVelocity(direction);
+        if (_leftWall != null)
+        {
+            float leftClearance =
+                ballBounds.min.x - _leftWall.bounds.max.x;
 
-        PlayPaddleSound();
+            if (leftClearance < wallThreshold)
+            {
+                direction.x = Mathf.Max(
+                    direction.x,
+                    minimumHorizontalDirection
+                );
+            }
+        }
     }
 
     /// <summary>
@@ -387,6 +593,7 @@ public class Ball : MonoBehaviour
     {
         if (!_ballLaunched)
             return;
+
 
         // Detect whether the ball has unexpectedly stopped moving.
         if (_rigidBody.velocity.sqrMagnitude < 0.01f)
