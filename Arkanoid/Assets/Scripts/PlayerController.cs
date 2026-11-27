@@ -178,8 +178,10 @@ public class PlayerController : MonoBehaviour
     {
         ExpandPaddleCollider();
 
+        _arena.playExpandSound();
+
         _animator.SetTrigger("Expand");
-        _animator.speed = 2f;
+        _animator.speed = 1f;
     }
 
     private void ExpandPaddleCollider()
