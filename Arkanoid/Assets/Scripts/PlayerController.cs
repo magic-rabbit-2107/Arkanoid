@@ -211,7 +211,12 @@ public class PlayerController : MonoBehaviour
         _arena.ballSpawner.SpawnBalls(_currentBall.transform.position, 2);
     }
 
+private bool PlayerIsBeingDestroyed()
+    {
+        AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
 
+        return stateInfo.IsName("Destroy");
+    }
 
 public bool AnimationStateCompleted(string stateName)
 {
