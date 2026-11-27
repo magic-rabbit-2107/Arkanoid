@@ -505,6 +505,10 @@ public abstract class Arena : MonoBehaviour
         _audioSource.PlayOneShot(this._database.expandSound);
     }
 
+    public void playGameOverSound()
+    {
+        _audioSource.PlayOneShot(this._database.gameOverSound);
+    }
 
     public bool gameOverMessageIsShown()
     {
