@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     public float movementSpeed = 30f;
     private Rigidbody2D _rigidBody;
 
+    private BoxCollider2D _boxCollider;
+
     private Ball _currentBall;
     private bool _inputEnabled = false;
 
