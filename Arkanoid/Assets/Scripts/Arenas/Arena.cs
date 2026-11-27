@@ -286,7 +286,7 @@ public abstract class Arena : MonoBehaviour
 
 
         StartCoroutine(DelaySetActive(0.5f,_gameOverObject,true));
-
+        StartCoroutine(DelayGameOverSound(0.5f));
     }
 
     IEnumerator DelaySetActive(float delayTime, GameObject objectToShow, bool active)
@@ -303,6 +303,13 @@ public abstract class Arena : MonoBehaviour
         _paddleObject.SetActive(true);
 
         _paddleObject.GetComponent<PlayerController>().showPlayerStart();
+    }
+
+    IEnumerator DelayGameOverSound(float delayTime)
+    {
+        yield return new WaitForSeconds(delayTime);
+
+        playGameOverSound();
     }
 
     public void updateLifeIcons()
