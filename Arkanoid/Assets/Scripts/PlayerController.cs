@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+public enum PlayerState
+{
+    IDLE,
+
+    PLAYING,
+
+    DEATH
+}
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
@@ -25,6 +33,8 @@ public class PlayerController : MonoBehaviour
     public float VelocityX { get; private set; }
 
     private Arena _arena;
+    private PlayerState _playerState;
+
 
     private void Awake()
     {
@@ -140,14 +150,19 @@ public class PlayerController : MonoBehaviour
 
     public void showPlayerDeath()
     {
+        _playerState = PlayerState.DEATH;
+
         _animator.SetTrigger("Destroy");
         // _animator.speed = 2f;
     }
 
     public void showPlayingState()
     {
+    
         _animator.SetTrigger("Playing");
         _animator.speed = 0.5f;
+
+        _playerState = PlayerState.PLAYING;
     }
 
     public void collectPowerUp(PowerUpType powerup)
@@ -218,5 +233,11 @@ public bool AnimationStateCompleted(string stateName)
 
     return false;
 }
+
+    public PlayerState PlayerState
+    {
+        get { return _playerState; }
+    }
+
 
 }
