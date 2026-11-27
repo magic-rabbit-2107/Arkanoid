@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [Header("Movement Settings")]
     public float movementSpeed = 30f;
     private Rigidbody2D _rigidBody;
+
     private Ball _currentBall;
     private bool _inputEnabled = false;
 
@@ -27,9 +28,17 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+
+        _animator = GetComponent<Animator>();
+
+        _arena = FindFirstObjectByType<Arena>();
+
+
+    }
+
+    private void initRigidBody()
+    {
         _rigidBody = GetComponent<Rigidbody2D>();
-
-
 
         // Ensure Rigidbody settings
         _rigidBody.gravityScale = 0f;
@@ -37,17 +46,6 @@ public class PlayerController : MonoBehaviour
         _rigidBody.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
         _rigidBody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         _rigidBody.interpolation = RigidbodyInterpolation2D.Interpolate;
-
-        _animator = GetComponent<Animator>();
-
-        _arena = FindFirstObjectByType<Arena>();
-
-
-
-        // foreach (var p in _animator.parameters)
-        // {
-        //     Debug.Log(p.name);
-        // }   
     }
 
     private void Start()
