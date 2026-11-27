@@ -33,11 +33,18 @@ public class PlayerController : MonoBehaviour
     public float VelocityX { get; private set; }
 
     private Arena _arena;
+
     private PlayerState _playerState;
 
+    private PaddleColliderData _initialColliderData;
 
     private void Awake()
     {
+        _boxCollider = GetComponent<BoxCollider2D>();
+
+        _initialColliderData = new PaddleColliderData(_boxCollider);
+
+        initRigidBody();
 
         _animator = GetComponent<Animator>();
 
@@ -163,6 +170,28 @@ public class PlayerController : MonoBehaviour
         _animator.speed = 0.5f;
 
         _playerState = PlayerState.PLAYING;
+    }
+
+    private void ActivateExpansion()
+    {
+        ExpandPaddleCollider();
+
+        _animator.SetTrigger("Expand");
+        _animator.speed = 2f;
+    }
+
+    private void ExpandPaddleCollider()
+    {
+        _boxCollider.size = new Vector2(
+            _initialColliderData.InitialSize.x * 1.5f,
+            _initialColliderData.InitialSize.y
+        );
+    }
+
+    private void RestorePaddleCollider()
+    {
+        _boxCollider.size = _initialColliderData.InitialSize;
+        _boxCollider.offset = _initialColliderData.InitialOffset;
     }
 
     public void collectPowerUp(PowerUpType powerup)
