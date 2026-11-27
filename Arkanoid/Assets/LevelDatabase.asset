@@ -37,3 +37,5 @@ MonoBehaviour:
   getReadySound: {fileID: 8300000, guid: 52992ea9f83554f4d84ef6559eca52be, type: 3}
   destroyPaddleSound: {fileID: 8300000, guid: 8d40c66b94cfd400eaca2b0d44fca1a5, type: 3}
   extraLifeSound: {fileID: 8300000, guid: d75375d3b51bb4105a3bf943772d9ccd, type: 3}
+  expandSound: {fileID: 8300000, guid: dcd585622584745ef8c8289a3d61298a, type: 3}
+  gameOverSound: {fileID: 8300000, guid: 6d156360cef0e41ef8d3162bd5ed0055, type: 3}
